@@ -35,7 +35,6 @@ class TaskAssignedSerializer(serializers.ModelSerializer):
 
 
 class ViewTaskAssignedSerializer(serializers.ModelSerializer):
-    user = ViewUserSerializer()
     task = ViewTaskSerializer()
 
     class Meta:

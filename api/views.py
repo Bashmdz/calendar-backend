@@ -70,6 +70,17 @@ def categories(request):
         )  # Return errors if the data is invalid
 
 
+@api_view(["GET"])
+@permission_classes([])
+@authentication_classes([])
+def tasks(request, pk=None):
+    # Handle GET request: Retrieve tasks assigned to a specific user
+    if request.method == "GET":
+        tasks_assigned = models.TaskAssigned.objects.filter(user__id=int(pk))
+        serializer = serializers.ViewTaskAssignedSerializer(tasks_assigned, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+
 @api_view(["GET", "POST", "PUT", "DELETE"])
 @permission_classes([])
 @authentication_classes([])
