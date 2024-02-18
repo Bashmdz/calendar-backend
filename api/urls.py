@@ -3,6 +3,8 @@ from . import views
 
 urlpatterns = [
     path("categories", views.categories, name="categories"),
+    re_path(r"^tasks/(?P<pk>[0-9]+)$", views.tasks),
+    path("tasks", views.tasks, name="tasks"),
     re_path(r"^task/(?P<pk>[0-9]+)$", views.task),
     path("task", views.task, name="task"),
     re_path(r"^task_assigned/(?P<pk>[0-9]+)$", views.task_assigned),
