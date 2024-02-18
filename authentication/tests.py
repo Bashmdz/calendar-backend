@@ -3,6 +3,8 @@ from .models import CustomUsers
 
 
 class CustomUsersModelTestCase(TestCase):
+    print("Running CustomUsersModelTestCase")
+
     def setUp(self):
         self.user = CustomUsers.objects.create_user(
             email="test@example.com", password="test123"
