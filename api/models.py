@@ -58,7 +58,7 @@ class TaskAssigned(models.Model):
 
 class Log(models.Model):
     type = models.CharField(max_length=10, default="")
-    task = models.ForeignKey(Task, on_delete=models.DO_NOTHING, blank=True, null=True)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, blank=True, null=True)
     user = models.ForeignKey(
         CustomUsers, on_delete=models.CASCADE, blank=True, null=True
     )
