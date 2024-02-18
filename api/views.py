@@ -78,6 +78,16 @@ def tasks(request, pk=None):
         return JsonResponse(serializer.data, safe=False)
 
 
+def delete_task(task_id, user_id):
+    task_assigned = get_object_or_404(
+        models.TaskAssigned, task_id=task_id, user_id=user_id
+    )
+    if task_assigned.isOwner:
+        task_assigned.task.delete()
+    else:
+        task_assigned.delete()
+
+
 @api_view(["GET", "POST", "PUT", "DELETE"])
 @permission_classes([])
 @authentication_classes([])
@@ -102,9 +112,14 @@ def task(request, pk=None):
             assign_users = request.data.get(
                 "assign_users", []
             )  # Get the list of user ids to assign the task
-            for user_id in json.loads(assign_users):
+            for i, user_id in enumerate(json.loads(assign_users)):
                 user = get_object_or_404(models.CustomUsers, pk=user_id)
-                add_task_assigned(task, user)  # Assign the task to each user
+                if i == 0:
+                    add_task_assigned(
+                        task, user, True
+                    )  # Assign the task to the first user with isOwner=True
+                else:
+                    add_task_assigned(task, user)  # Assign the task to other users
             add_log_entry("Created", task=task)  # Add a log entry for task creation
             return JsonResponse(serializer.data, status=201)
         return JsonResponse({"message": serializer.errors}, status=400)
@@ -140,8 +155,10 @@ def task(request, pk=None):
 
     # Handle DELETE request: Delete a task
     elif request.method == "DELETE":
-        task = get_object_or_404(models.Task, pk=pk)
-        task.delete()
+        task_id = pk
+        user_id = request.data.get("user_id", None)
+        if user_id is not None:
+            delete_task(task_id, user_id)
         return JsonResponse({"message": "Task was deleted successfully"}, status=204)
 
 
