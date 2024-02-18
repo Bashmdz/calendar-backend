@@ -36,6 +36,9 @@ def add_task_assigned(task, user):
         user=user,
     )
     task_assigned.save()
+    add_log_entry(
+        "Assigned", task=task, user=user
+    )  # Add a log entry for task assignment
 
 
 @api_view(["GET", "POST"])  # Define allowed methods
