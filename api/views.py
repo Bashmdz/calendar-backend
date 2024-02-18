@@ -47,11 +47,11 @@ def task(request, pk=None):
         if pk:
             # Retrieve a specific task by pk (id)
             task = get_object_or_404(models.Task, pk=pk)
-            serializer = serializers.TaskSerializer(task)
+            serializer = serializers.ViewTaskSerializer(task)
         else:
             # List all tasks
             tasks = models.Task.objects.all()
-            serializer = serializers.TaskSerializer(tasks, many=True)
+            serializer = serializers.ViewTaskSerializer(tasks, many=True)
         return JsonResponse(serializer.data, safe=False)
 
     # Handle POST request: Create a new task
@@ -89,11 +89,13 @@ def task_assigned(request, pk=None):
         if pk:
             # Retrieve a specific task assignment by pk (id)
             task_assigned = get_object_or_404(models.TaskAssigned, pk=pk)
-            serializer = serializers.TaskAssignedSerializer(task_assigned)
+            serializer = serializers.ViewTaskAssignedSerializer(task_assigned)
         else:
             # List all task assignments
             tasks_assigned = models.TaskAssigned.objects.all()
-            serializer = serializers.TaskAssignedSerializer(tasks_assigned, many=True)
+            serializer = serializers.ViewTaskAssignedSerializer(
+                tasks_assigned, many=True
+            )
         return JsonResponse(serializer.data, safe=False)
 
     # Handle POST request: Create a new task assignment
@@ -124,3 +126,20 @@ def task_assigned(request, pk=None):
         return JsonResponse(
             {"message": "Task assignment was deleted successfully"}, status=204
         )
+
+
+@api_view(["GET"])
+@permission_classes([])
+@authentication_classes([])
+def log_entries(request, pk=None):
+    # Handle GET request: Retrieve a specific log entry or list all
+    if request.method == "GET":
+        if pk:
+            # Retrieve a specific log entry by pk (id)
+            log_entry = get_object_or_404(models.Log, pk=pk)
+            serializer = serializers.ViewLogSerializer(log_entry)
+        else:
+            # List all log entries
+            logs = models.Log.objects.all().order_by("-timestamp")  # Newest first
+            serializer = serializers.ViewLogSerializer(logs, many=True)
+        return JsonResponse(serializer.data, safe=False)
