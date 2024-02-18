@@ -112,16 +112,6 @@ def task(request, pk=None):
             return JsonResponse(serializer.data, status=201)
         return JsonResponse({"message": serializer.errors}, status=400)
 
-    # Handle PUT/PATCH request: Update an existing task
-    # elif request.method == "PUT":
-    #     task = get_object_or_404(models.Task, pk=pk)
-    #     serializer = serializers.TaskSerializer(task, data=request.data, partial=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         add_log_entry("Updated", task=task)  # Add a log entry for task update
-    #         return JsonResponse(serializer.data)
-    #     return JsonResponse({"message": serializer.errors}, status=400)
-
     elif request.method == "PUT":
         task = get_object_or_404(models.Task, pk=pk)
         serializer = serializers.TaskSerializer(task, data=request.data, partial=True)
