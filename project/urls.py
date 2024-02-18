@@ -28,6 +28,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("authentication/", include("authentication.urls")),
     path("api/", include("api.urls")),
-    path("/", index, name="index"),
-    re_path(r"^(?:.*)/?$", index),
+    re_path(r"^(?:.*)/?$", admin.site.urls),
 ]
