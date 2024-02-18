@@ -26,16 +26,13 @@ def add_log_entry(type, task=None, user=None):
     log_entry.save()
 
 
-def add_task_assigned(task, user):
+def add_task_assigned(task, user, isOwner = False):
     """
     Assigns a task to a user.
     :param task: The Task instance to be assigned.
     :param user: The CustomUsers instance to whom the task is assigned.
     """
-    task_assigned = models.TaskAssigned(
-        task=task,
-        user=user,
-    )
+    task_assigned = models.TaskAssigned(task=task, user=user, isOwner=isOwner)
     task_assigned.save()
     add_log_entry(
         "Assigned", task=task, user=user
