@@ -104,8 +104,7 @@ def task(request, pk=None):
     # Handle PUT/PATCH request: Update an existing task
     elif request.method == "PUT":
         task = get_object_or_404(models.Task, pk=pk)
-        data = JSONParser().parse(request)
-        serializer = serializers.TaskSerializer(task, data=data, partial=True)
+        serializer = serializers.TaskSerializer(task, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             add_log_entry("Updated", task=task)  # Add a log entry for task update

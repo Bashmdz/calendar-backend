@@ -21,7 +21,7 @@ class ViewTaskSerializer(serializers.ModelSerializer):
 
     def get_assign_users(self, obj):
         users = models.TaskAssigned.objects.filter(task_id=obj.id)
-        return [{"value": user.user.id, "label": user.user.name} for user in users]
+        return [{"id": user.user.id, "name": user.user.name} for user in users]
 
     class Meta:
         model = models.Task
