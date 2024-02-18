@@ -78,3 +78,49 @@ def task(request, pk=None):
         task = get_object_or_404(models.Task, pk=pk)
         task.delete()
         return JsonResponse({"message": "Task was deleted successfully"}, status=204)
+
+
+@api_view(["GET", "POST", "PUT", "DELETE"])
+@permission_classes([])
+@authentication_classes([])
+def task_assigned(request, pk=None):
+    # Handle GET request: Retrieve a specific task assignment or list all
+    if request.method == "GET":
+        if pk:
+            # Retrieve a specific task assignment by pk (id)
+            task_assigned = get_object_or_404(models.TaskAssigned, pk=pk)
+            serializer = serializers.TaskAssignedSerializer(task_assigned)
+        else:
+            # List all task assignments
+            tasks_assigned = models.TaskAssigned.objects.all()
+            serializer = serializers.TaskAssignedSerializer(tasks_assigned, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    # Handle POST request: Create a new task assignment
+    elif request.method == "POST":
+        data = JSONParser().parse(request)
+        serializer = serializers.TaskAssignedSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+    # Handle PUT/PATCH request: Update an existing task assignment
+    elif request.method == "PUT":
+        task_assigned = get_object_or_404(models.TaskAssigned, pk=pk)
+        data = JSONParser().parse(request)
+        serializer = serializers.TaskAssignedSerializer(
+            task_assigned, data=data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+
+    # Handle DELETE request: Delete a task assignment
+    elif request.method == "DELETE":
+        task_assigned = get_object_or_404(models.TaskAssigned, pk=pk)
+        task_assigned.delete()
+        return JsonResponse(
+            {"message": "Task assignment was deleted successfully"}, status=204
+        )
