@@ -64,12 +64,10 @@ def task(request, pk=None):
         return JsonResponse(serializer.errors, status=400)
 
     # Handle PUT/PATCH request: Update an existing task
-    elif request.method in ["PUT", "PATCH"]:
+    elif request.method == "PUT":
         task = get_object_or_404(models.Task, pk=pk)
         data = JSONParser().parse(request)
-        serializer = serializers.TaskSerializer(
-            task, data=data, partial=(request.method == "PATCH")
-        )
+        serializer = serializers.TaskSerializer(task, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
