@@ -99,7 +99,7 @@ def task(request, pk=None):
                 add_task_assigned(task, user)  # Assign the task to each user
             add_log_entry("Created", task=task)  # Add a log entry for task creation
             return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+        return JsonResponse({"message": serializer.errors}, status=400)
 
     # Handle PUT/PATCH request: Update an existing task
     elif request.method == "PUT":
@@ -110,7 +110,7 @@ def task(request, pk=None):
             serializer.save()
             add_log_entry("Updated", task=task)  # Add a log entry for task update
             return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+        return JsonResponse({"message": serializer.errors}, status=400)
 
     # Handle DELETE request: Delete a task
     elif request.method == "DELETE":
@@ -150,7 +150,7 @@ def task_assigned(request, pk=None):
                 user=serializer.validated_data["user"],
             )  # Add a log entry for task assignment
             return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+        return JsonResponse({"message": serializer.errors}, status=400)
 
     # Handle PUT/PATCH request: Update an existing task assignment
     elif request.method == "PUT":
@@ -167,7 +167,7 @@ def task_assigned(request, pk=None):
                 user=serializer.validated_data["user"],
             )  # Add a log entry for task assignment update
             return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+        return JsonResponse({"message": serializer.errors}, status=400)
 
     # Handle DELETE request: Delete a task assignment
     elif request.method == "DELETE":
