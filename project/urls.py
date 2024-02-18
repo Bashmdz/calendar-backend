@@ -20,13 +20,8 @@ from django.urls import path, include, re_path
 from django.shortcuts import render
 
 
-def index(request):
-    return render(request, "dist/index.html")
-
-
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("authentication/", include("authentication.urls")),
     path("api/", include("api.urls")),
-    re_path(r"^(?:.*)/?$", admin.site.urls),
 ]
