@@ -8,6 +8,7 @@ from rest_framework.parsers import JSONParser
 from . import serializers
 from . import models
 from django.shortcuts import get_object_or_404
+import json
 
 
 def add_log_entry(type, task=None, user=None):
@@ -93,7 +94,7 @@ def task(request, pk=None):
             assign_users = request.data.get(
                 "assign_users", []
             )  # Get the list of user ids to assign the task
-            for user_id in assign_users:
+            for user_id in json.loads(assign_users):
                 user = get_object_or_404(models.CustomUsers, pk=user_id)
                 add_task_assigned(task, user)  # Assign the task to each user
             add_log_entry("Created", task=task)  # Add a log entry for task creation
