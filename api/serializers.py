@@ -36,3 +36,18 @@ class ViewTaskAssignedSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.TaskAssigned
         fields = "__all__"
+
+
+class LogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Log
+        fields = "__all__"
+
+
+class ViewLogSerializer(serializers.ModelSerializer):
+    user = ViewUserSerializer()
+    task = ViewTaskSerializer()
+
+    class Meta:
+        model = models.Log
+        fields = "__all__"
