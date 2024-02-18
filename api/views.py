@@ -7,6 +7,7 @@ from rest_framework.decorators import (
 from rest_framework.parsers import JSONParser
 from . import serializers
 from . import models
+from django.shortcuts import get_object_or_404
 
 
 @api_view(["GET", "POST"])  # Define allowed methods
@@ -35,3 +36,47 @@ def categories(request):
         return JsonResponse(
             {"message": serializer.errors}, status=400
         )  # Return errors if the data is invalid
+
+
+@api_view(["GET", "POST", "PUT", "DELETE"])
+@permission_classes([])
+@authentication_classes([])
+def task(request, pk=None):
+    # Handle GET request: Retrieve a specific task or list all tasks
+    if request.method == "GET":
+        if pk:
+            # Retrieve a specific task by pk (id)
+            task = get_object_or_404(models.Task, pk=pk)
+            serializer = serializers.TaskSerializer(task)
+        else:
+            # List all tasks
+            tasks = models.Task.objects.all()
+            serializer = serializers.TaskSerializer(tasks, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
+    # Handle POST request: Create a new task
+    elif request.method == "POST":
+        data = JSONParser().parse(request)
+        serializer = serializers.TaskSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
+
+    # Handle PUT/PATCH request: Update an existing task
+    elif request.method in ["PUT", "PATCH"]:
+        task = get_object_or_404(models.Task, pk=pk)
+        data = JSONParser().parse(request)
+        serializer = serializers.TaskSerializer(
+            task, data=data, partial=(request.method == "PATCH")
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+
+    # Handle DELETE request: Delete a task
+    elif request.method == "DELETE":
+        task = get_object_or_404(models.Task, pk=pk)
+        task.delete()
+        return JsonResponse({"message": "Task was deleted successfully"}, status=204)
