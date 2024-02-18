@@ -46,6 +46,7 @@ class Task(models.Model):
 class TaskAssigned(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUsers, on_delete=models.CASCADE)
+    isActive = models.BooleanField(default=True)
     timestamp = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
