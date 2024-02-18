@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from authentication.models import CustomUsers
 
 # Create your models here.
 
@@ -40,3 +41,15 @@ class Task(models.Model):
 
     class Meta:
         verbose_name_plural = "Tasks"
+
+
+class TaskAssigned(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUsers, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.task} - {self.user}"
+
+    class Meta:
+        verbose_name_plural = "Task Assigned"
