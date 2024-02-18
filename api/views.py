@@ -113,12 +113,41 @@ def task(request, pk=None):
         return JsonResponse({"message": serializer.errors}, status=400)
 
     # Handle PUT/PATCH request: Update an existing task
+    # elif request.method == "PUT":
+    #     task = get_object_or_404(models.Task, pk=pk)
+    #     serializer = serializers.TaskSerializer(task, data=request.data, partial=True)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         add_log_entry("Updated", task=task)  # Add a log entry for task update
+    #         return JsonResponse(serializer.data)
+    #     return JsonResponse({"message": serializer.errors}, status=400)
+
     elif request.method == "PUT":
         task = get_object_or_404(models.Task, pk=pk)
         serializer = serializers.TaskSerializer(task, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             add_log_entry("Updated", task=task)  # Add a log entry for task update
+
+            # Update assigned users
+            assign_users = request.data.get("assign_users", [])
+            try:
+                assign_users = json.loads(assign_users)
+            except json.JSONDecodeError:
+                return JsonResponse(
+                    {"message": "Invalid JSON format for assign_users"}, status=400
+                )
+            existing_assigned_users = models.TaskAssigned.objects.filter(task=task)
+
+            # Delete existing assigned users not in the updated list
+            existing_assigned_users.exclude(user__id__in=assign_users).delete()
+
+            # Add new assigned users not already assigned
+            for user_id in assign_users:
+                if not existing_assigned_users.filter(user__id=user_id).exists():
+                    user = get_object_or_404(models.CustomUsers, pk=user_id)
+                    add_task_assigned(task, user)  # Assign the task to the user
+
             return JsonResponse(serializer.data)
         return JsonResponse({"message": serializer.errors}, status=400)
 
@@ -126,7 +155,6 @@ def task(request, pk=None):
     elif request.method == "DELETE":
         task = get_object_or_404(models.Task, pk=pk)
         task.delete()
-        add_log_entry("Deleted", task=task)  # Add a log entry for task deletion
         return JsonResponse({"message": "Task was deleted successfully"}, status=204)
 
 
