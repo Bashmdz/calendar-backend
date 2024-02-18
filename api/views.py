@@ -71,11 +71,11 @@ def task(request, pk=None):
 
     # Handle POST request: Create a new task
     elif request.method == "POST":
-        data = JSONParser().parse(request)
-        serializer = serializers.TaskSerializer(data=data)
+        serializer = serializers.TaskSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data, status=201)
+        print(serializer.errors)
         return JsonResponse(serializer.errors, status=400)
 
     # Handle PUT/PATCH request: Update an existing task
