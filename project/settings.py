@@ -22,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-a8g3jqb*kzqaisc7^qa^yz*fp&4*e0of!l%7czkff=uk=34ldf"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["https://calender-app-bashar-e84fae186fa8.herokuapp.com", "127.0.0.1"]
 
 
 # Application definition
@@ -62,7 +62,7 @@ ROOT_URLCONF = "project.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR.parent, "frontend")],
+        "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -135,16 +135,15 @@ DATABASES["default"].update(db_from_env)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 # The absolute path to the directory where collectstatic will collect static files for deployment.
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # The URL to use when referring to static files (where they will be served from)
-STATIC_URL = "/assets/"
+STATIC_URL = "/static/"
 
-STATICFILES_DIRS = (
-    os.path.join(
-        BASE_DIR.parent, "frontend", "dist", "assets"
-    ),  # update the STATICFILES_DIRS
-)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"

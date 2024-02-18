@@ -3,3 +3,4 @@ djangorestframework==3.13.1
 django-cors-headers==3.13.0
 dj-database-url==1.0.0
 whitenoise==6.2.0
+gunicorn==21.2.0
