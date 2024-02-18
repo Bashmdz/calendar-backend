@@ -55,7 +55,7 @@ def users(request):
         # GET ALL USERS
         instances = models.CustomUsers.objects.filter(is_staff=False)
         objects = serializers.ViewUserSerializer(instances, many=True)
-        return JsonResponse(objects.data)
+        return JsonResponse(objects.data, safe=False)
 
 
 @api_view(["POST", "PUT", "GET", "DELETE"])
