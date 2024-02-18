@@ -24,7 +24,7 @@ class Task(models.Model):
     )
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     progress = models.CharField(
-        max_length=10,
+        max_length=11,
         choices=[("Open", "Open"), ("In Progress", "In Progress"), ("Done", "Done")],
         default="Open",
     )
