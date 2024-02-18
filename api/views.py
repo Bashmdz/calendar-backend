@@ -26,7 +26,7 @@ def add_log_entry(type, task=None, user=None):
     log_entry.save()
 
 
-def add_task_assigned(task, user, isOwner = False):
+def add_task_assigned(task, user, isOwner=False):
     """
     Assigns a task to a user.
     :param task: The Task instance to be assigned.
