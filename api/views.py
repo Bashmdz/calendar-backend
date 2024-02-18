@@ -10,6 +10,21 @@ from . import models
 from django.shortcuts import get_object_or_404
 
 
+def add_log_entry(type, task=None, user=None):
+    """
+    Adds a log entry to the database.
+    :param type: The type of log entry (e.g., 'Created', 'Updated', 'Deleted', 'Assigned').
+    :param task: Optional; the Task instance related to the log entry.
+    :param user: Optional; the CustomUsers instance related to the log entry.
+    """
+    log_entry = models.Log(
+        type=type,
+        task=task,
+        user=user,
+    )
+    log_entry.save()
+
+
 @api_view(["GET", "POST"])  # Define allowed methods
 @permission_classes([])  # No permission required
 @authentication_classes([])  # No authentication required
