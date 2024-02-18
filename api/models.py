@@ -53,3 +53,18 @@ class TaskAssigned(models.Model):
 
     class Meta:
         verbose_name_plural = "Task Assigned"
+
+
+class Log(models.Model):
+    type = models.CharField(max_length=10, default="")
+    task = models.ForeignKey(Task, on_delete=models.DO_NOTHING, blank=True, null=True)
+    user = models.ForeignKey(
+        CustomUsers, on_delete=models.CASCADE, blank=True, null=True
+    )
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.task} - {self.user}"
+
+    class Meta:
+        verbose_name_plural = "Logs"
