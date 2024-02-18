@@ -25,6 +25,19 @@ def add_log_entry(type, task=None, user=None):
     log_entry.save()
 
 
+def add_task_assigned(task, user):
+    """
+    Assigns a task to a user.
+    :param task: The Task instance to be assigned.
+    :param user: The CustomUsers instance to whom the task is assigned.
+    """
+    task_assigned = models.TaskAssigned(
+        task=task,
+        user=user,
+    )
+    task_assigned.save()
+
+
 @api_view(["GET", "POST"])  # Define allowed methods
 @permission_classes([])  # No permission required
 @authentication_classes([])  # No authentication required
@@ -73,9 +86,15 @@ def task(request, pk=None):
     elif request.method == "POST":
         serializer = serializers.TaskSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            task = serializer.save()  # Save the new Task object to the database
+            assign_users = request.data.get(
+                "assign_users", []
+            )  # Get the list of user ids to assign the task
+            for user_id in assign_users:
+                user = get_object_or_404(models.CustomUsers, pk=user_id)
+                add_task_assigned(task, user)  # Assign the task to each user
+            add_log_entry("Created", task=task)  # Add a log entry for task creation
             return JsonResponse(serializer.data, status=201)
-        print(serializer.errors)
         return JsonResponse(serializer.errors, status=400)
 
     # Handle PUT/PATCH request: Update an existing task
@@ -85,6 +104,7 @@ def task(request, pk=None):
         serializer = serializers.TaskSerializer(task, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            add_log_entry("Updated", task=task)  # Add a log entry for task update
             return JsonResponse(serializer.data)
         return JsonResponse(serializer.errors, status=400)
 
@@ -92,6 +112,7 @@ def task(request, pk=None):
     elif request.method == "DELETE":
         task = get_object_or_404(models.Task, pk=pk)
         task.delete()
+        add_log_entry("Deleted", task=task)  # Add a log entry for task deletion
         return JsonResponse({"message": "Task was deleted successfully"}, status=204)
 
 
@@ -119,6 +140,11 @@ def task_assigned(request, pk=None):
         serializer = serializers.TaskAssignedSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
+            add_log_entry(
+                "Assigned",
+                task=serializer.validated_data["task"],
+                user=serializer.validated_data["user"],
+            )  # Add a log entry for task assignment
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
 
@@ -131,6 +157,11 @@ def task_assigned(request, pk=None):
         )
         if serializer.is_valid():
             serializer.save()
+            add_log_entry(
+                "Updated",
+                task=serializer.validated_data["task"],
+                user=serializer.validated_data["user"],
+            )  # Add a log entry for task assignment update
             return JsonResponse(serializer.data)
         return JsonResponse(serializer.errors, status=400)
 
@@ -138,6 +169,9 @@ def task_assigned(request, pk=None):
     elif request.method == "DELETE":
         task_assigned = get_object_or_404(models.TaskAssigned, pk=pk)
         task_assigned.delete()
+        add_log_entry(
+            "Deleted", task=task_assigned.task, user=task_assigned.user
+        )  # Add a log entry for task assignment deletion
         return JsonResponse(
             {"message": "Task assignment was deleted successfully"}, status=204
         )
