@@ -43,7 +43,7 @@ coverage.xml
 
 # VirtualEnv
 env/
-
+db.sqlite3
 # Developers
 *.sw*
 manage.py

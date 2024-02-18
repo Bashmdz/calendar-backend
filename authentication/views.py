@@ -47,6 +47,17 @@ def validate(request):
         return JsonResponse({"message": "empty"}, status=status.HTTP_200_OK)
 
 
+@api_view(["GET"])
+@permission_classes([])
+@authentication_classes([])
+def users(request):
+    if request.method == "GET":
+        # GET ALL USERS
+        instances = models.CustomUsers.objects.filter(is_staff=False)
+        objects = serializers.ViewUserSerializer(instances, many=True)
+        return JsonResponse(objects.data)
+
+
 @api_view(["POST", "PUT", "GET", "DELETE"])
 @permission_classes([])
 @authentication_classes([])
