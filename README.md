@@ -24,6 +24,7 @@
   - [TaskAssignedModelTestCase](#taskassignedmodeltestcase)
   - [LogModelTestCase](#logmodeltestcase)
 - [Deployment](#deployment)
+- [Postman Collection](#postman-collection)
 
 ## Introduction and Project Goals
 
@@ -162,3 +163,11 @@ CalenTask is deployed on Heroku using Heroku PostgreSQL as the database. By defa
 5. Run migrations and set up the database (`heroku run python manage.py migrate`).
 6. Your CalenTask application should now be deployed and accessible via the provided Heroku app URL.
 7. Your app should now be deployed and accessible via the provided Heroku URL.
+
+## Postman Collection
+
+The Postman collection file for this project is located at "/postman/CalenTask.postman_collection.json". You can import this file into Postman to access the collection of API endpoints and test them.
+
+### Variables
+
+- `server_url`: `http://127.0.0.1:8000` (default value)
