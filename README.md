@@ -25,7 +25,7 @@
   - [LogModelTestCase](#logmodeltestcase)
 - [Deployment](#deployment)
 
-## Introduction
+## Introduction and Project Goals
 
 CalenTask is a Task Management System designed to help users organize and track their tasks efficiently. It allows users to register, create tasks, assign them to other users, and monitor their progress through an intuitive calendar interface.
 
