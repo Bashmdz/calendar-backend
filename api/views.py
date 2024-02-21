@@ -82,10 +82,11 @@ def delete_task(task_id, user_id):
     task_assigned = get_object_or_404(
         models.TaskAssigned, task_id=task_id, user_id=user_id
     )
-    if task_assigned.isOwner:
-        task_assigned.task.delete()
-    else:
-        task_assigned.delete()
+    if task_assigned:
+        if task_assigned.isOwner:
+            task_assigned.task.delete()
+        else:
+            task_assigned.delete()
 
 
 @api_view(["GET", "POST", "PUT", "DELETE"])
@@ -157,8 +158,9 @@ def task(request, pk=None):
     elif request.method == "DELETE":
         task_id = pk
         user_id = request.data.get("user_id", None)
-        if user_id is not None:
-            delete_task(task_id, user_id)
+        if user_id is None or user_id == "":
+            return JsonResponse({"message": "user_id is required"}, status=400)
+        delete_task(task_id, user_id)
         return JsonResponse({"message": "Task was deleted successfully"}, status=204)
 
 

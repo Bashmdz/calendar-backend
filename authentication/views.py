@@ -66,8 +66,10 @@ def user(request, pk=None):
         # GET A USER BY ID
         if pk is None:
             return JsonResponse({"message": "No user id given!"}, safe=False)
-        data = JSONParser().parse(request)
-        instance = models.CustomUsers.objects.get(pk=int(pk))
+        try:
+            instance = models.CustomUsers.objects.get(pk=int(pk))
+        except models.CustomUsers.DoesNotExist:
+            return JsonResponse({"message": "No user found!"}, safe=False)
         object = serializers.ViewUserSerializer(instance, many=False)
         return JsonResponse(object.data, safe=False)
     if request.method == "POST":
