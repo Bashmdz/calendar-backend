@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import status
 from . import serializers
 from . import models
@@ -11,15 +10,15 @@ from rest_framework.decorators import (
 from rest_framework.parsers import JSONParser
 from django.contrib.auth.hashers import check_password
 
-# Create your views here.
-
 
 @api_view(["POST"])
 @permission_classes([])
 @authentication_classes([])
 def validate(request):
+    """
+    Validate a user's email and password.
+    """
     if request.method == "POST":
-        # VALIDATE A USER
         data = JSONParser().parse(request)
         Users = models.CustomUsers.objects.all()
         email = data["email"]
@@ -51,8 +50,10 @@ def validate(request):
 @permission_classes([])
 @authentication_classes([])
 def users(request):
+    """
+    Get all users.
+    """
     if request.method == "GET":
-        # GET ALL USERS
         instances = models.CustomUsers.objects.filter(is_staff=False)
         objects = serializers.ViewUserSerializer(instances, many=True)
         return JsonResponse(objects.data, safe=False)
@@ -62,8 +63,10 @@ def users(request):
 @permission_classes([])
 @authentication_classes([])
 def user(request, pk=None):
+    """
+    Perform CRUD operations on a user.
+    """
     if request.method == "GET":
-        # GET A USER BY ID
         if pk is None:
             return JsonResponse({"message": "No user id given!"}, safe=False)
         try:
@@ -73,7 +76,6 @@ def user(request, pk=None):
         object = serializers.ViewUserSerializer(instance, many=False)
         return JsonResponse(object.data, safe=False)
     if request.method == "POST":
-        # ADD A USER
         data = JSONParser().parse(request)
         serializer = serializers.CustomUserSerializer(data=data)
         if serializer.is_valid():
@@ -85,7 +87,6 @@ def user(request, pk=None):
             {"message": serializer.errors}, status=status.HTTP_202_ACCEPTED
         )
     if request.method == "PUT":
-        # UPDATE A USER
         if pk is None:
             return JsonResponse({"message": "No user id given!"}, safe=False)
 
@@ -101,9 +102,7 @@ def user(request, pk=None):
         if data["newPassword"]:
             data["password"] = data["newPassword"]
 
-        serializer = serializers.CustomUserSerializer(
-            instance, data=data, partial=True
-        )  # Allow partial updates
+        serializer = serializers.CustomUserSerializer(instance, data=data, partial=True)
 
         if serializer.is_valid():
             instance = serializer.save()

@@ -25,6 +25,8 @@
   - [LogModelTestCase](#logmodeltestcase)
 - [Deployment](#deployment)
 - [Postman Collection](#postman-collection)
+- [Future Functionalities](#future-functionalities)
+  - [Logs](#logs)
 
 ## Introduction and Project Goals
 
@@ -168,6 +170,32 @@ CalenTask is deployed on Heroku using Heroku PostgreSQL as the database. By defa
 
 The Postman collection file for this project is located at "/postman/CalenTask.postman_collection.json". You can import this file into Postman to access the collection of API endpoints and test them.
 
+To import the collection into Postman, follow these steps:
+
+1. Open Postman.
+2. Click on the "Import" button in the top left corner of the Postman interface.
+3. In the import dialog, select the "File" tab.
+4. Click on the "Choose Files" button and navigate to the location of the "CalenTask.postman_collection.json" file.
+5. Select the file and click on the "Open" button.
+6. Postman will import the collection and display it in the left sidebar under the "Collections" tab.
+7. You can now explore the collection and test the API endpoints by sending requests.
+
+Importing the Postman collection allows you to easily interact with the API endpoints provided by the CalenTask Task Management System and test their functionality.
+
 ### Variables
 
 - `server_url`: `http://127.0.0.1:8000` (default value)
+
+## Future Functionalities
+
+### Logs
+
+In the current implementation, the system saves logs for the creation, updation, and deletion of tasks. However, there is no interaction functionality for users to view these logs or receive notifications.
+
+A future functionality to be added is the ability for users to interact with the logs. This can include features such as:
+
+- Viewing a log history for each task, displaying the date and time of each action.
+- Notifying users when a task they are assigned to has been modified or deleted.
+- Providing a notification center where users can view all their notifications.
+
+Implementing these functionalities will enhance the user experience and improve the overall usability of the CalenTask Task Management System.

@@ -5,6 +5,7 @@ from . import models
 # Register your models here.
 
 
+# Custom admin class for User model
 class UserAdmin(admin.ModelAdmin):
     exclude = (
         "first_name",
@@ -30,15 +31,10 @@ class UserAdmin(admin.ModelAdmin):
 
 admin.site.register(models.CustomUsers, UserAdmin)
 
-
+# Customize admin site headers
 admin.site.site_header = "Admin Panel"
 admin.site.site_title = "Admin Panel"
 admin.site.index_title = "Admin Panel"
 
-
 # Hide AUTHENTICATION AND AUTHORIZATION
-
-# from django.contrib.auth.models import User
-
-# admin.site.unregister(User)
 admin.site.unregister(Group)

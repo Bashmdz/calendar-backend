@@ -43,7 +43,10 @@ def add_task_assigned(task, user, isOwner=False):
 @permission_classes([])  # No permission required
 @authentication_classes([])  # No authentication required
 def categories(request):
-    # Handle GET requests: List all categories
+    """
+    Handle GET requests: List all categories
+    Handle POST requests: Create a new category
+    """
     if request.method == "GET":
         query = models.Category.objects.all()  # Retrieve all Category objects
         query_serializer = serializers.CategorySerializer(
@@ -51,7 +54,6 @@ def categories(request):
         )  # Serialize the data
         return JsonResponse(query_serializer.data, safe=False)  # Return serialized data
 
-    # Handle POST requests: Create a new category
     elif request.method == "POST":
         data = JSONParser().parse(request)  # Parse the incoming JSON data
         serializer = serializers.CategorySerializer(
@@ -71,7 +73,9 @@ def categories(request):
 @permission_classes([])
 @authentication_classes([])
 def tasks(request, pk=None):
-    # Handle GET request: Retrieve tasks assigned to a specific user
+    """
+    Handle GET request: Retrieve tasks assigned to a specific user
+    """
     if request.method == "GET":
         tasks_assigned = models.TaskAssigned.objects.filter(user__id=int(pk))
         serializer = serializers.ViewTaskAssignedSerializer(tasks_assigned, many=True)
@@ -93,26 +97,26 @@ def delete_task(task_id, user_id):
 @permission_classes([])
 @authentication_classes([])
 def task(request, pk=None):
-    # Handle GET request: Retrieve a specific task or list all tasks
+    """
+    Handle GET request: Retrieve a specific task or list all tasks
+    Handle POST request: Create a new task
+    Handle PUT request: Update an existing task
+    Handle DELETE request: Delete a task
+    """
     if request.method == "GET":
         if pk:
-            # Retrieve a specific task by pk (id)
             task = get_object_or_404(models.Task, pk=pk)
             serializer = serializers.ViewTaskSerializer(task)
         else:
-            # List all tasks
             tasks = models.Task.objects.all()
             serializer = serializers.ViewTaskSerializer(tasks, many=True)
         return JsonResponse(serializer.data, safe=False)
 
-    # Handle POST request: Create a new task
     elif request.method == "POST":
         serializer = serializers.TaskSerializer(data=request.data)
         if serializer.is_valid():
-            task = serializer.save()  # Save the new Task object to the database
-            assign_users = request.data.get(
-                "assign_users", []
-            )  # Get the list of user ids to assign the task
+            task = serializer.save()
+            assign_users = request.data.get("assign_users", [])
             for i, user_id in enumerate(json.loads(assign_users)):
                 user = get_object_or_404(models.CustomUsers, pk=user_id)
                 if i == 0:
@@ -132,7 +136,6 @@ def task(request, pk=None):
             serializer.save()
             add_log_entry("Updated", task=task)  # Add a log entry for task update
 
-            # Update assigned users
             assign_users = request.data.get("assign_users", [])
             try:
                 assign_users = json.loads(assign_users)
@@ -142,10 +145,8 @@ def task(request, pk=None):
                 )
             existing_assigned_users = models.TaskAssigned.objects.filter(task=task)
 
-            # Delete existing assigned users not in the updated list
             existing_assigned_users.exclude(user__id__in=assign_users).delete()
 
-            # Add new assigned users not already assigned
             for user_id in assign_users:
                 if not existing_assigned_users.filter(user__id=user_id).exists():
                     user = get_object_or_404(models.CustomUsers, pk=user_id)
@@ -154,7 +155,6 @@ def task(request, pk=None):
             return JsonResponse(serializer.data)
         return JsonResponse({"message": serializer.errors}, status=400)
 
-    # Handle DELETE request: Delete a task
     elif request.method == "DELETE":
         task_id = pk
         user_id = request.data.get("user_id", None)
@@ -168,21 +168,23 @@ def task(request, pk=None):
 @permission_classes([])
 @authentication_classes([])
 def task_assigned(request, pk=None):
-    # Handle GET request: Retrieve a specific task assignment or list all
+    """
+    Handle GET request: Retrieve a specific task assignment or list all
+    Handle POST request: Create a new task assignment
+    Handle PUT/PATCH request: Update an existing task assignment
+    Handle DELETE request: Delete a task assignment
+    """
     if request.method == "GET":
         if pk:
-            # Retrieve a specific task assignment by pk (id)
             task_assigned = get_object_or_404(models.TaskAssigned, pk=pk)
             serializer = serializers.ViewTaskAssignedSerializer(task_assigned)
         else:
-            # List all task assignments
             tasks_assigned = models.TaskAssigned.objects.all()
             serializer = serializers.ViewTaskAssignedSerializer(
                 tasks_assigned, many=True
             )
         return JsonResponse(serializer.data, safe=False)
 
-    # Handle POST request: Create a new task assignment
     elif request.method == "POST":
         data = JSONParser().parse(request)
         serializer = serializers.TaskAssignedSerializer(data=data)
@@ -196,7 +198,6 @@ def task_assigned(request, pk=None):
             return JsonResponse(serializer.data, status=201)
         return JsonResponse({"message": serializer.errors}, status=400)
 
-    # Handle PUT/PATCH request: Update an existing task assignment
     elif request.method == "PUT":
         task_assigned = get_object_or_404(models.TaskAssigned, pk=pk)
         data = JSONParser().parse(request)
@@ -213,7 +214,6 @@ def task_assigned(request, pk=None):
             return JsonResponse(serializer.data)
         return JsonResponse({"message": serializer.errors}, status=400)
 
-    # Handle DELETE request: Delete a task assignment
     elif request.method == "DELETE":
         task_assigned = get_object_or_404(models.TaskAssigned, pk=pk)
         task_assigned.delete()
@@ -229,14 +229,14 @@ def task_assigned(request, pk=None):
 @permission_classes([])
 @authentication_classes([])
 def log_entries(request, pk=None):
-    # Handle GET request: Retrieve a specific log entry or list all
+    """
+    Handle GET request: Retrieve a specific log entry or list all
+    """
     if request.method == "GET":
         if pk:
-            # Retrieve a specific log entry by pk (id)
             log_entry = get_object_or_404(models.Log, pk=pk)
             serializer = serializers.ViewLogSerializer(log_entry)
         else:
-            # List all log entries
             logs = models.Log.objects.all().order_by("-timestamp")  # Newest first
             serializer = serializers.ViewLogSerializer(logs, many=True)
         return JsonResponse(serializer.data, safe=False)

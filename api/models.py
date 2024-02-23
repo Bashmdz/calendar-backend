@@ -5,6 +5,7 @@ from authentication.models import CustomUsers
 # Create your models here.
 
 
+# Category model
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -15,6 +16,7 @@ class Category(models.Model):
         verbose_name_plural = "Categories"
 
 
+# Task model
 class Task(models.Model):
     title = models.CharField(max_length=256)
     priority = models.CharField(
@@ -43,6 +45,7 @@ class Task(models.Model):
         verbose_name_plural = "Tasks"
 
 
+# TaskAssigned model
 class TaskAssigned(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUsers, on_delete=models.CASCADE)
@@ -56,6 +59,7 @@ class TaskAssigned(models.Model):
         verbose_name_plural = "Task Assigned"
 
 
+# Log model
 class Log(models.Model):
     type = models.CharField(max_length=10, default="")
     task = models.ForeignKey(Task, on_delete=models.CASCADE, blank=True, null=True)

@@ -16,10 +16,9 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include, re_path
-from django.shortcuts import render
+from django.urls import path, include
 
-
+# URL patterns for the project
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("authentication/", include("authentication.urls")),

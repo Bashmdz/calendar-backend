@@ -5,14 +5,12 @@ from django.utils import timezone
 
 
 class CategoryModelTestCase(TestCase):
-    print("Running CategoryModelTestCase")
     def test_category_creation(self):
         category = Category.objects.create(name="Test Category")
         self.assertEqual(category.name, "Test Category")
 
 
 class TaskModelTestCase(TestCase):
-    print("Running TaskModelTestCase")
     def setUp(self):
         self.category = Category.objects.create(name="Test Category")
         self.task = Task.objects.create(
@@ -31,7 +29,6 @@ class TaskModelTestCase(TestCase):
 
 
 class TaskAssignedModelTestCase(TestCase):
-    print("Running TaskAssignedModelTestCase")
     def setUp(self):
         self.category = Category.objects.create(name="Test Category")
         self.user = CustomUsers.objects.create_user(
@@ -57,7 +54,6 @@ class TaskAssignedModelTestCase(TestCase):
 
 
 class LogModelTestCase(TestCase):
-    print("Running LogModelTestCase")
     def setUp(self):
         self.category = Category.objects.create(name="Test Category")
         self.user = CustomUsers.objects.create_user(

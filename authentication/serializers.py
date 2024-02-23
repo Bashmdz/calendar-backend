@@ -4,7 +4,7 @@ from . import models
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """
-    Currently unused in preference of the below.
+    Serializer for custom user model.
     """
 
     password = serializers.CharField(min_length=8, write_only=True)
@@ -15,6 +15,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
+        """
+        Create a new custom user instance.
+        """
         password = validated_data.pop("password", None)
         instance = self.Meta.model(**validated_data)
         if password is not None:
@@ -24,6 +27,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 
 class ViewUserSerializer(serializers.ModelSerializer):
+    """
+    Serializer for viewing user details.
+    """
 
     class Meta:
         model = models.CustomUsers
