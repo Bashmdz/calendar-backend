@@ -17,9 +17,16 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponse
+
+
+def welcome(request):
+    return HttpResponse("Welcome to CalenTask API")
+
 
 # URL patterns for the project
 urlpatterns = [
+    path("", welcome),
     path("admin/", admin.site.urls),
     path("authentication/", include("authentication.urls")),
     path("api/", include("api.urls")),

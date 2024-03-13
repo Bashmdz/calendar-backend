@@ -118,13 +118,14 @@ def task(request, pk=None):
             task = serializer.save()
             assign_users = request.data.get("assign_users", [])
             for i, user_id in enumerate(json.loads(assign_users)):
-                user = get_object_or_404(models.CustomUsers, pk=user_id)
-                if i == 0:
-                    add_task_assigned(
-                        task, user, True
-                    )  # Assign the task to the first user with isOwner=True
-                else:
-                    add_task_assigned(task, user)  # Assign the task to other users
+                if user_id != "" and user_id is not None:
+                    user = get_object_or_404(models.CustomUsers, pk=user_id)
+                    if i == 0:
+                        add_task_assigned(
+                            task, user, True
+                        )  # Assign the task to the first user with isOwner=True
+                    else:
+                        add_task_assigned(task, user)  # Assign the task to other users
             add_log_entry("Created", task=task)  # Add a log entry for task creation
             return JsonResponse(serializer.data, status=201)
         return JsonResponse({"message": serializer.errors}, status=400)
